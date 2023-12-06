@@ -1,9 +1,20 @@
 import { Form, addForm } from "./features/FormSlice";
-import { useDispatch } from "react-redux";
+import {
+  selectCurrentStep,
+  selectStep,
+  nextStep,
+  prevStep,
+  goToStep,
+  updateCounter,
+  selectCurrentIndex,
+} from "./features/MultistepSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import DisplayResult from "./components/DisplayResult";
-import useMultistep from "./hooks/useMultistep";
+
 import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import FormTitle from "./components/FormTitle";
 
 function App() {
   const [newIme, setNewIme] = useState("");
@@ -15,8 +26,14 @@ function App() {
   const [newDatumRodjenja, setNewDatumRodjenja] = useState("");
   const [newTelefon, setNewTelefon] = useState("");
 
-  const dispatch = useDispatch();
+  function isValidEmail(validEmail: string) {
+    return /\S+@\S+\.\S+/.test(validEmail);
+  }
 
+  const currentStep = useSelector(selectCurrentStep);
+  const currentIndex = useSelector(selectCurrentIndex);
+  const step = useSelector(selectStep);
+  const dispatch = useDispatch();
   const handleSubmitForm = () => {
     const newForm: Form = {
       ime: newIme,
@@ -31,14 +48,41 @@ function App() {
 
     dispatch(addForm(newForm));
   };
+  const handleNext = () => {
+    dispatch(nextStep());
+  };
 
-  const { steps, currentStep, step, back, next } = useMultistep([
-    <dt>Unesi lične podatke</dt>,
-    <dt>Mjesto boravka</dt>,
-    <dt>Ostale informacije</dt>,
-    <dt>Kraj</dt>,
-  ]);
+  const handleCounter = () => {
+    dispatch(updateCounter());
+  };
 
+  const handlePrev = () => {
+    dispatch(prevStep());
+  };
+
+  const handleGoTo = (index: number = currentIndex) => {
+    if (
+      newIme !== "" &&
+      newPrezime !== "" &&
+      newEmail !== "" &&
+      isValidEmail(newEmail) &&
+      index === 1
+    ) {
+      dispatch(goToStep({ index }));
+    } else if (
+      newAdresa !== "" &&
+      newGrad !== "" &&
+      newDrzava !== "" &&
+      index === 2
+    ) {
+      dispatch(goToStep({ index }));
+    } else if (index === 0) {
+      dispatch(goToStep({ index }));
+    } else return;
+  };
+  handleGoTo();
+
+  console.log(currentStep);
   return (
     <>
       <div className="relative bg-[#02044a]  rounded-xl mt-10 p-20 w-[70%] mx-auto max-h-[520px] drop-shadow-md ">
@@ -47,34 +91,15 @@ function App() {
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmitForm();
-            // setNewIme("");
-            // setNewPrezime("");
-            // setNewEmail("");
-            // setNewAdresa("");
-            // setNewGrad("");
-            // setNewDrzava("");
-            // setNewDatumRodjenja("");
-            // setNewTelefon(0);
-            next();
+            handleCounter();
+
+            handleNext();
           }}
         >
-          <div className="col-span-4">
-            <div className="font-bold text-white text-xl">Multi-step Forma</div>
-            <dt className="font-light text-white">
-              Ova Multi-step forma koristi Redux
-            </dt>
-            <div className="h-[0.5px] w-full bg-gray-700/50 mt-5"></div>
-          </div>
-          <Sidebar currentStep={currentStep} steps={steps} />
+          <Header />
+          <Sidebar />
           <div className="col-start-2 col-span-3 row-start-2 row-span-4 ml-5 p-4">
-            <div className="text-gray-300 font-thin text-xs">
-              Korak {currentStep + 1} / {steps.length}
-            </div>
-            <div className="font-bold text-white text-xl">{step}</div>
-            <div className="text-gray-300 text-sm">
-              Informacije koje upišete koristit će za vašu identifikaciju
-            </div>
-            <div className="h-[0.5px] w-full bg-gray-700/50 mt-3"></div>
+            <FormTitle currentStep={currentStep} />
 
             <div className="w-full">
               {currentStep === 0 ? (
@@ -192,7 +217,7 @@ function App() {
               {currentStep > 0 && currentStep < 3 ? (
                 <button
                   type="button"
-                  onClick={back}
+                  onClick={handlePrev}
                   className="py-1 px-4 text-emerald-700 bg-white rounded-2xl drop-shadow-md"
                 >
                   Back
@@ -200,10 +225,18 @@ function App() {
               ) : (
                 ""
               )}
-              {currentStep < 3 ? (
+              {currentStep === 2 || currentIndex === 2 ? (
                 <button
                   type="submit"
                   className="py-1 px-4 text-white bg-emerald-500 rounded-2xl drop-shadow-md"
+                >
+                  Next
+                </button>
+              ) : currentIndex < 2 || currentStep < 2 ? (
+                <button
+                  type="button"
+                  className="py-1 px-4 text-white bg-emerald-500 rounded-2xl drop-shadow-md"
+                  onClick={handleNext}
                 >
                   Next
                 </button>
@@ -212,9 +245,7 @@ function App() {
               )}
             </div>
 
-            {currentStep === 3 ? <DisplayResult /> : ""}
-
-            {/* {currentStep === 2 ? <button onClick={next}>SUBMIT</button> : ""} */}
+            {currentStep === 3 || currentIndex > 2 ? <DisplayResult /> : ""}
           </div>
         </form>
       </div>

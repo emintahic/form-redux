@@ -13,10 +13,12 @@ export interface Form {
 
 interface FormsState {
   forms: Form[];
+  // form: Form;
 }
 
 const initialState: FormsState = {
   forms: [],
+  // form: {} as Form,
 };
 
 const formsSlice = createSlice({
@@ -26,6 +28,9 @@ const formsSlice = createSlice({
     addForm: (state, action: PayloadAction<any>) => {
       state.forms.push(action.payload);
     },
+    // addOneForm: (state, action: PayloadAction<any>) => {
+    //   state.form = action.payload;
+    // },
   },
 });
 

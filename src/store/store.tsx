@@ -1,11 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import FormSlice from "../features/FormSlice";
+import MultistepSlice from "../features/MultistepSlice";
 
 const formsReducer = FormSlice;
+const multistepReducer = MultistepSlice;
 
 const store = configureStore({
   reducer: {
     forms: formsReducer,
+    multistep: multistepReducer,
   },
 });
 
