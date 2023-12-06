@@ -105,6 +105,7 @@ function App() {
                       className="outline-none  bg-[#02044a]   text-white placeholder-white ring-1 ring-emerald-300 focus:ring-emerald-400  rounded-md p-1"
                       placeholder="Email"
                       required
+                      autoComplete="off"
                       pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
                       value={newEmail}
                       onChange={(e) => {
@@ -179,7 +180,7 @@ function App() {
                       setNewTelefon(e.target.value);
                     }}
                     type="tel"
-                    maxLength="10"
+                    maxLength={10}
                     pattern="\b\d{9}\b|\b\d{10}\b"
                   />
                 </div>
