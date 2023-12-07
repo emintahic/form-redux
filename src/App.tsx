@@ -7,6 +7,7 @@ import {
   goToStep,
   updateCounter,
   selectCurrentIndex,
+  setIndex,
 } from "./features/MultistepSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
@@ -60,6 +61,10 @@ function App() {
     dispatch(prevStep());
   };
 
+  const handleSetIndex = (index: number) => {
+    dispatch(setIndex({ index }));
+  };
+
   const handleGoTo = (index: number = currentIndex) => {
     if (
       newIme !== "" &&
@@ -81,13 +86,13 @@ function App() {
     } else return;
   };
   handleGoTo();
+  console.log(currentIndex);
 
-  console.log(currentStep);
   return (
     <>
-      <div className="relative bg-[#02044a]  rounded-xl mt-10 p-20 w-[70%] mx-auto max-h-[520px] drop-shadow-md ">
+      <div className="relative bg-[#02044a]  sm:rounded-xl sm:mt-10 p-10 sm:p-20 w-full sm:w-[70%] mx-auto sm:max-h-[520px] drop-shadow-md ">
         <form
-          className="grid grid-cols-4 grid-rows-5 h-[440px]"
+          className="grid grid-cols-4 grid-rows-5 sm:h-[440px]"
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmitForm();
@@ -234,9 +239,11 @@ function App() {
                 </button>
               ) : currentIndex < 2 || currentStep < 2 ? (
                 <button
-                  type="button"
+                  type="submit"
                   className="py-1 px-4 text-white bg-emerald-500 rounded-2xl drop-shadow-md"
-                  onClick={handleNext}
+                  // onClick={() => {
+                  //   handleSetIndex(step.index);
+                  // }}
                 >
                   Next
                 </button>

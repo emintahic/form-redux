@@ -1,11 +1,10 @@
-import useMultistep from "../hooks/useMultistep";
 import { useSelector } from "react-redux";
 import { selectStep, selectAllSteps } from "../features/MultistepSlice";
 
 function FormTitle(currentStep: any) {
   const allSteps = useSelector(selectAllSteps);
   const step = useSelector(selectStep);
-  console.log(step);
+
   return (
     <div>
       <div className="text-gray-300 font-thin text-xs">
